@@ -18,4 +18,26 @@ Versione con esecuzione di trentadue istruzioni parallele:<br>
 - `find . -maxdepth 1 -iname "*.p7m" -print0 | xargs -0 -n 1 -P 32 p7m -x`<br>
 Ognuno può customizzare lo script in base alla potenza elaborativa del proprio computer cambiando il numero dopo l'opzione -<b>P</b>... <br>
 
-PS Attenzione a maiuscole e spazi quando si scrive nel terminale di Linux...
+## Conversione Massiva di file XLS, XLSX o ODS
+Mi capita spesso di ricevere centinaia di file XLS, XLSX o ODS contenenti dati in forma tabulare, coerenti tra loro, e volerli unire in un unico grandissimo file da aprire con Excel, fino a 50.000 righe, o Access, in caso di righe superiori, al fine di poter fare delle ricerche univoche o effettuare dei filtri sul totale senza aprire individualmente centinaia di fogli di calcolo.<br>
+Dopo aver fatto vari tentativi, la soluzione più semplice è stata quella di creare il seguente script linux:<br>
+01. `for i in *.[xX][lL][sS]; do`<br>
+02. `    echo ${i}`<br>
+03. `   python3 -W ignore /usr/bin/unoconv -f csv "$i" #"${i%.*}.csv"`<br>
+04. `done`<br>
+05. `for i in *.[xX][lL][sS][xX]; do`<br>
+06. `    echo ${i}`<br>
+07. `   python3 -W ignore /usr/bin/unoconv -f csv "$i" #"${i%.*}.csv"`<br>
+08. `done`<br>
+09. `for i in *.[oO][dD][sS]; do`<br>
+10. `    echo ${i}`<br>
+11. `    python3 -W ignore /usr/bin/unoconv -f csv "$i" #"${i%.*}.csv"`<br>
+12. `done`<br>
+
+
+copy *.csv totale.txt
+cat *.csv > totale.txt
+
+
+
+<h2> PS Attenzione a maiuscole e spazi quando si scrive nel terminale di Linux...</h2>
