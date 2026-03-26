@@ -1,0 +1,33 @@
+Sub EstraiAllegatiDaMSG()
+    Dim fso As Object
+    Dim cartellaMSG As String, cartellaSalvataggio As String
+    Dim fileMSG As Object, objMail As Outlook.MailItem
+    Dim allegato As Outlook.Attachment
+    
+    ' --- CONFIGURA I PERCORSI QUI ---
+    cartellaMSG =         "D:\origine\"      ' Cartella con i file .msg
+    cartellaSalvataggio = "D:\destinazione\" ' Cartella destinazione
+    ' --------------------------------
+    
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    For Each fileMSG In fso.GetFolder(cartellaMSG).Files
+        If LCase(fso.GetExtensionName(fileMSG.Path)) = "msg" Then
+            ' Apri il file MSG come oggetto Outlook (senza mostrarlo)
+            Set objMail = Application.Session.OpenSharedItem(fileMSG.Path)
+            
+            ' Cicla tra gli allegati della mail
+            For Each allegato In objMail.Attachments
+                allegato.SaveAsFile cartellaSalvataggio & allegato.FileName
+            Next allegato
+            
+            ' Chiudi l'oggetto per liberare memoria
+            objMail.Close olDiscard
+        End If
+        
+    Next fileMSG
+    
+    MsgBox "Estrazione completata!", vbInformation
+End Sub
+
+
