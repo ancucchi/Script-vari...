@@ -52,4 +52,39 @@ Le versioni più recenti di Excel permettono ai file <b>xlsx</b> una dimensione 
 Quindi se superate le 50.000 righe di un file <b>csv</b> importarlo in Access è la via più semplice.<br>
 Se poi volete proprio esagerare, un passaggio intermedio in Notepad++#64 (fino a 20.000.000 di righe l'ho testato - bisogna avere tanta RAM) permetterà di controllare i dati e di scremarli...<br>
 Alternativamente le funzioni cat, head, tail, grep, sort e simii del terminale linux vis permettono di controllare i dati e di scremarli senza avere bisogno di tanta RAM solo di un po' di basi di Linux...<br>
+
+## Estrazione massiva di allegati da email in formato .msg<br>
+Giorno nuovo, script nuovo!<br>
+Richiesta del giorno: Si possono estrarre massivamente gli allegati da email in formato .msg?<br>
+E, ringraziando le tanto bistrattate IA, ecco lo script VBA da lanciare in Outlook:<br>
+  * Apri Outlook.<br>
+  * Premi ALT + F11 per aprire l'editor VBA.<br>
+  * Nel menu in alto, vai su Inserisci > Modulo.<br>
+  * Copia e incolla questo codice:<br>
+
+01. `	Sub EstraiAllegatiDaMSG()`<br>
+02. `		Dim fso As Object`<br>
+03. `		Dim cartellaMSG As String, cartellaSalvataggio As String`<br>
+04. `		Dim fileMSG As Object, objMail As Outlook.MailItem`<br>
+05. `		Dim allegato As Outlook.Attachment`<br>
+06. `		'--- CONFIGURA I PERCORSI QUI ---'`<br>
+07. `		cartellaMSG = "D:\origine\" ' Cartella con i file .msg`<br>
+08. `		cartellaSalvataggio = "D:\destinazione\" ' Cartella destinazione`<br>
+09. `		'--------------------------------'`<br>
+10. `		Set fso = CreateObject("Scripting.FileSystemObject")`<br>
+11. `		For Each fileMSG In fso.GetFolder(cartellaMSG).Files`<br>
+12. `			If LCase(fso.GetExtensionName(fileMSG.Path)) = "msg" Then`<br>
+13. `			'Apri il file MSG come oggetto Outlook (senza mostrarlo)'`<br>
+14. `			Set objMail = Application.Session.OpenSharedItem(fileMSG.Path)`<br>
+15. `			'Cicla tra gli allegati della mail'`<br>
+16. `			For Each allegato In objMail.Attachments`<br>
+17. `			allegato.SaveAsFile cartellaSalvataggio & allegato.FileName`<br>
+18. `			Next allegato`<br>
+19. `			'Chiudi l'oggetto per liberare memoria'`<br>
+20. `			objMail.Close olDiscard`<br>
+21. `		End If`<br>
+22. `		Next fileMSG`<br>
+23. `		MsgBox "Estrazione completata!", vbInformation`<br>
+24. `	End Sub`<br>
+
 <h2> PS Attenzione a maiuscole e spazi quando si scrive nel terminale di Linux...</h2>
